@@ -11,11 +11,11 @@ const Layout = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    navigate('/');
   };
 
   const navItems = [
-    { path: '/', icon: Home, label: 'Checklist', roles: ['operatore', 'manager'] },
+    { path: '/checklist', icon: Home, label: 'Checklist', roles: ['operatore', 'manager'] },
     { path: '/inventory', icon: Package, label: 'Inventario', roles: ['operatore', 'manager'] },
     { path: '/dashboard', icon: BarChart3, label: 'Dashboard', roles: ['manager'] },
   ];

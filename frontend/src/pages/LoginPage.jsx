@@ -57,7 +57,7 @@ const LoginPage = () => {
       loginUser(user, apartment, checklist, access_token);
       
       toast.success(`Benvenuta/o ${user.name}!`);
-      navigate('/');
+      navigate('/checklist');
     } catch (error) {
       console.error('Errore login:', error);
       toast.error('Errore durante il login. Riprova.');

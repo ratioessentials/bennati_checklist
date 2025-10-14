@@ -19,11 +19,11 @@ const ProtectedRoute = ({ children, requireManager = false }) => {
   }
 
   if (!user) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/" replace />;
   }
 
   if (requireManager && user.role !== 'manager') {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/checklist" replace />;
   }
 
   return children;
@@ -35,10 +35,12 @@ const AppRoutes = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={user ? <Navigate to="/" replace /> : <LoginPage />} />
+        {/* Homepage: sempre mostra login */}
+        <Route path="/" element={<LoginPage />} />
         
+        {/* Pagine protette: solo se loggato */}
         <Route
-          path="/"
+          path="/checklist"
           element={
             <ProtectedRoute>
               <Layout />
@@ -46,17 +48,32 @@ const AppRoutes = () => {
           }
         >
           <Route index element={<ChecklistPage />} />
-          <Route path="inventory" element={<InventoryPage />} />
-          <Route
-            path="dashboard"
-            element={
-              <ProtectedRoute requireManager={true}>
-                <ManagerDashboard />
-              </ProtectedRoute>
-            }
-          />
+        </Route>
+        
+        <Route
+          path="/inventory"
+          element={
+            <ProtectedRoute>
+              <Layout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<InventoryPage />} />
+        </Route>
+        
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute requireManager={true}>
+              <Layout />
+            </ProtectedRoute>
+          }
+        >
+          <Route index element={<ManagerDashboard />} />
         </Route>
 
+        {/* Redirect per compatibilità */}
+        <Route path="/login" element={<Navigate to="/" replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       <ToastContainer
