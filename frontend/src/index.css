@@ -225,5 +225,39 @@ body {
   background-color: var(--warning);
 }
 
+/* Mobile Simulator */
+.mobile-simulator {
+  /* Assicura che il contenuto non esca dal riquadro mobile */
+  max-width: 100vw;
+  max-height: 100vh;
+  overflow: hidden;
+}
+
+/* Nascondi scrollbar nel simulatore mobile */
+.mobile-simulator::-webkit-scrollbar {
+  display: none;
+}
+
+.mobile-simulator {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Animazioni per i controlli */
+.simulator-control {
+  transition: all 0.2s ease;
+}
+
+.simulator-control:hover {
+  transform: scale(1.05);
+}
+
+/* Effetto glassmorphism per i controlli */
+.glass-effect {
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
 
 

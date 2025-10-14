@@ -9,6 +9,7 @@ import ChecklistPage from './pages/ChecklistPage';
 import InventoryPage from './pages/InventoryPage';
 import ManagerDashboard from './pages/ManagerDashboard';
 import Layout from './components/Layout';
+import MobileSimulator from './components/MobileSimulator';
 
 // Protected Route wrapper
 const ProtectedRoute = ({ children, requireManager = false }) => {
@@ -94,7 +95,9 @@ const AppRoutes = () => {
 function App() {
   return (
     <AppProvider>
-      <AppRoutes />
+      <MobileSimulator>
+        <AppRoutes />
+      </MobileSimulator>
     </AppProvider>
   );
 }
