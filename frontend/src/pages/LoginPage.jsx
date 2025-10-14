@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { LogIn, Building2, Calendar, User } from 'lucide-react';
+import { LogIn, Building2, Calendar, User, Lock } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { login, getApartments } from '../services/api';
 
@@ -11,7 +11,8 @@ const LoginPage = () => {
   const [loading, setLoading] = useState(false);
   const [apartments, setApartments] = useState([]);
   const [formData, setFormData] = useState({
-    name: '',
+    username: '',
+    password: '',
     apartment_id: '',
     date: new Date().toISOString().split('T')[0],
   });
@@ -33,8 +34,13 @@ const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!formData.name.trim()) {
-      toast.error('Inserisci il tuo nome');
+    if (!formData.username.trim()) {
+      toast.error('Inserisci username');
+      return;
+    }
+    
+    if (!formData.password.trim()) {
+      toast.error('Inserisci password');
       return;
     }
     
@@ -47,7 +53,8 @@ const LoginPage = () => {
     
     try {
       const response = await login({
-        name: formData.name.trim(),
+        username: formData.username.trim(),
+        password: formData.password,
         apartment_id: parseInt(formData.apartment_id),
         date: formData.date ? new Date(formData.date).toISOString() : null,
       });
@@ -56,11 +63,12 @@ const LoginPage = () => {
       
       loginUser(user, apartment, checklist, access_token);
       
-      toast.success(`Benvenuta/o ${user.name}!`);
+      toast.success(`Benvenuta ${user.name}!`);
       navigate('/checklist');
     } catch (error) {
       console.error('Errore login:', error);
-      toast.error('Errore durante il login. Riprova.');
+      const message = error.response?.data?.detail || 'Username o password non corretti';
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -91,18 +99,35 @@ const LoginPage = () => {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="input-group">
-              <label htmlFor="name">
+              <label htmlFor="username">
                 <User size={20} className="inline mr-2" />
-                Nome Operatore
+                Username
               </label>
               <input
                 type="text"
-                id="name"
-                name="name"
-                value={formData.name}
+                id="username"
+                name="username"
+                value={formData.username}
                 onChange={handleChange}
-                placeholder="Inserisci il tuo nome"
-                autoComplete="name"
+                placeholder="es: sofia"
+                autoComplete="username"
+                required
+              />
+            </div>
+
+            <div className="input-group">
+              <label htmlFor="password">
+                <Lock size={20} className="inline mr-2" />
+                Password
+              </label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                placeholder="Inserisci password"
+                autoComplete="current-password"
                 required
               />
             </div>
@@ -163,7 +188,11 @@ const LoginPage = () => {
           </form>
 
           <div className="mt-6 pt-6 border-t border-gray-200 text-center text-sm text-gray-600">
-            <p>Seleziona il tuo nome e l'appartamento su cui lavorerai oggi</p>
+            <p>Accedi con le tue credenziali</p>
+            <p className="text-xs mt-2 text-gray-500">
+              Username: sofia, giulia, martina, chiara<br/>
+              Password: Prova123!
+            </p>
           </div>
         </div>
 

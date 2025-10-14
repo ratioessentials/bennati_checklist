@@ -20,7 +20,23 @@ post_deploy:
   - mkdir -p ../uploads
   - chmod 777 ../uploads
   
+  # Crea file .env se non esiste (da configurare manualmente dopo)
+  - echo "⚙️ Configurazione ambiente..."
+  - cd ../backend
+  - if [ ! -f .env ]; then cp .env.example .env; echo "⚠️ IMPORTANTE: Configura backend/.env con le credenziali del database!"; fi
+  
+  # Inizializza database (solo se .env è configurato)
+  - echo "🗄️ Inizializzazione database..."
+  - python3 init_data.py || echo "⚠️ Errore init database - configura prima .env!"
+  
+  # Avvia/Riavvia backend (se già in esecuzione lo riavvia)
+  - echo "🔄 Avvio backend..."
+  - pkill -f "uvicorn main:app" || true
+  - nohup python3 -m uvicorn main:app --host 0.0.0.0 --port 8000 > ../backend.log 2>&1 &
+  - echo "Backend avviato su porta 8000 (log: backend.log)"
+  
   - echo "✅ Deployment completato!"
   - echo "📍 Frontend disponibile in: frontend/dist/"
-  - echo "🔧 Ricorda di configurare il Document Root su: frontend/dist"
+  - echo "🔧 Configura Document Root su: frontend/dist"
+  - echo "🔧 Configura Nginx proxy per /api → http://localhost:8000"
 
