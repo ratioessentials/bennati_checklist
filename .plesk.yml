@@ -1,0 +1,26 @@
+# Plesk deployment configuration
+# Questo file viene letto automaticamente da Plesk quando fai un deploy via Git
+
+# Script che viene eseguito dopo ogni pull da Git
+post_deploy:
+  - echo "🚀 Avvio deployment automatico..."
+  
+  # Backend: installa dipendenze Python
+  - echo "📦 Installazione dipendenze backend..."
+  - cd backend && pip3 install -r requirements.txt --user
+  
+  # Frontend: installa dipendenze e build
+  - echo "🎨 Build frontend..."
+  - cd ../frontend
+  - npm install
+  - npm run build
+  
+  # Crea cartella uploads se non esiste
+  - echo "📁 Preparazione cartelle..."
+  - mkdir -p ../uploads
+  - chmod 777 ../uploads
+  
+  - echo "✅ Deployment completato!"
+  - echo "📍 Frontend disponibile in: frontend/dist/"
+  - echo "🔧 Ricorda di configurare il Document Root su: frontend/dist"
+

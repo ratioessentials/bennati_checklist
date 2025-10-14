@@ -4,40 +4,63 @@
 
 ### Opzione 1: Script Automatico (Consigliato)
 
+**Produzione:**
 ```bash
-cd /Users/joshmini/Desktop/bennati_checklist
-./start-docker.sh
+cd bennati_checklist
+./start-prod.sh
+```
+
+**Development:**
+```bash
+cd bennati_checklist
+./start-dev.sh
 ```
 
 Lo script farà tutto automaticamente:
 - ✅ Ferma container esistenti
 - ✅ Avvia PostgreSQL, Backend e Frontend
 - ✅ Aspetta che il database sia pronto
-- ✅ Inizializza dati di esempio
+- ✅ Inizializza dati di esempio (se necessario)
 
 ### Opzione 2: Comandi Manuali
 
+**Produzione:**
 ```bash
-cd /Users/joshmini/Desktop/bennati_checklist
+cd bennati_checklist
 
 # Avvia tutti i servizi
 docker-compose up -d --build
+```
+
+**Development:**
+```bash
+cd bennati_checklist
+
+# Avvia tutti i servizi
+docker-compose -f docker-compose.dev.yml up -d --build
 
 # Aspetta 10 secondi che il database sia pronto
 sleep 10
 
-# Inizializza database
-docker-compose exec backend python init_data.py
+# Inizializza database (se necessario)
+docker-compose -f docker-compose.dev.yml exec backend python init_data.py
 ```
 
 ## 🌐 Accesso all'Applicazione
 
 Dopo l'avvio, l'app sarà disponibile su:
 
+**Produzione:**
 - **Frontend**: http://localhost:3000
 - **Backend API**: http://localhost:8000
 - **API Docs**: http://localhost:8000/docs
-- **Database**: localhost:5432
+- **Database**: localhost:5433
+
+**Development:**
+- **Frontend**: http://localhost:5173
+- **Backend API**: http://localhost:8000
+- **API Docs**: http://localhost:8000/docs
+- **Database**: localhost:5433
 
 ## 📝 Credenziali di Test
 
