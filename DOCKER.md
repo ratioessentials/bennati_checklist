@@ -43,7 +43,7 @@ Dopo l'avvio, l'app sarà disponibile su:
 
 **Login Operatore:**
 - Nome: `Maria` (o qualsiasi nome)
-- Appartamento: Seleziona tra 1, 2, 3, 4
+- Appartamento: Seleziona tra Monolocale, Bilocale 1°, Bilocale Terra, Trilocale
 - Data: Oggi
 
 **Login Manager:**

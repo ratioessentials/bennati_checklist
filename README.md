@@ -83,6 +83,49 @@ frontend/
 
 ## 🚀 Installazione e Setup
 
+### 🏭 Modalità Produzione (Ottimizzata)
+```bash
+# 1. Clona il repository
+git clone https://github.com/ratioessentials/bennati_checklist.git
+cd bennati_checklist
+
+# 2. Avvia con Docker (produzione)
+./start-prod.sh
+
+# 3. Apri il browser
+open http://localhost:3000
+```
+
+### 🔧 Modalità Development (Hot Reload)
+
+#### Opzione A: Development Semplificato (Consigliato)
+```bash
+# 1. Clona il repository
+git clone https://github.com/ratioessentials/bennati_checklist.git
+cd bennati_checklist
+
+# 2. Avvia database + istruzioni per backend/frontend
+./start-dev-simple.sh
+
+# 3. Segui le istruzioni per avviare backend e frontend
+# 4. Apri il browser: http://localhost:5173
+```
+
+#### Opzione B: Development Completo Docker
+```bash
+# 1. Clona il repository
+git clone https://github.com/ratioessentials/bennati_checklist.git
+cd bennati_checklist
+
+# 2. Avvia tutto con Docker (development)
+./start-dev.sh
+
+# 3. Apri il browser
+open http://localhost:5173
+```
+
+**💡 Development Mode**: Modifica i file e vedi le modifiche in tempo reale!
+
 ### Prerequisiti
 - Python 3.9+
 - Node.js 18+

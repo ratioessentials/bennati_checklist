@@ -124,7 +124,7 @@ npm run dev
 
 1. Apri http://localhost:3000
 2. Inserisci nome: "Maria" (o qualsiasi nome)
-3. Seleziona appartamento: "Appartamento 1"
+3. Seleziona appartamento: "Monolocale"
 4. Lascia data di oggi
 5. Click "Inizia Turno"
 
@@ -178,10 +178,10 @@ ngrok http 3000
 Dopo aver eseguito `init_data.py`, avrai:
 
 ### Appartamenti (4)
-- Appartamento 1 (Piano terra, 2 camere)
-- Appartamento 2 (Primo piano, monolocale)
-- Appartamento 3 (Secondo piano, 3 camere)
-- Appartamento 4 (Attico, 2 camere con terrazzo)
+- Monolocale (Monolocale, cucina e bagno)
+- Bilocale 1° (Primo piano, 2 camere)
+- Bilocale Terra (Piano terra, 2 camere)
+- Trilocale (3 camere, cucina e bagno)
 
 ### Utenti
 - Manager (ruolo: manager)

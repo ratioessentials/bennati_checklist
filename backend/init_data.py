@@ -15,10 +15,10 @@ db = SessionLocal()
 try:
     # Crea appartamenti
     apartments = [
-        Apartment(name="Appartamento 1", description="Piano terra, 2 camere"),
-        Apartment(name="Appartamento 2", description="Primo piano, monolocale"),
-        Apartment(name="Appartamento 3", description="Secondo piano, 3 camere"),
-        Apartment(name="Appartamento 4", description="Attico, 2 camere con terrazzo")
+        Apartment(name="Monolocale", description="Monolocale, cucina e bagno"),
+        Apartment(name="Bilocale 1°", description="Primo piano, 2 camere"),
+        Apartment(name="Bilocale Terra", description="Piano terra, 2 camere"),
+        Apartment(name="Trilocale", description="3 camere, cucina e bagno")
     ]
     
     for apt in apartments:
