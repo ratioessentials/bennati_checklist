@@ -6,7 +6,7 @@ services:
     build: ./backend
     container_name: simple_backend
     ports:
-      - "8000:8000"
+      - "8001:8000"
     environment:
       - PYTHONUNBUFFERED=1
       - SECRET_KEY=your-secret-key-change-this-in-production
@@ -20,7 +20,7 @@ services:
     build: ./frontend
     container_name: simple_frontend
     ports:
-      - "15000:3000"
+      - "3001:3000"
     depends_on:
       - backend
 
