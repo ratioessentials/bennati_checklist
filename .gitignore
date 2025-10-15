@@ -53,6 +53,7 @@ yarn-error.log*
 # frontend/dist/  # Commented out to include dist in git for Plesk deployment
 frontend/.vite/
 frontend/.cache/
+frontend/index.html  # Development index.html should not be in git
 
 # Logs
 logs/
