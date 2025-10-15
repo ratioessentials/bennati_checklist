@@ -6,6 +6,7 @@ from models import (
     Apartment, User, UserRole, InventoryCategory, InventoryItem,
     ChecklistTemplate, TaskTemplate
 )
+from auth import hash_password
 
 # Crea tabelle
 Base.metadata.create_all(bind=engine)
@@ -29,13 +30,27 @@ try:
     db.commit()
     print("✅ Appartamenti creati")
     
-    # Crea utente manager
-    manager = db.query(User).filter(User.name == "Manager").first()
-    if not manager:
-        manager = User(name="Manager", role=UserRole.MANAGER)
-        db.add(manager)
-        db.commit()
-    print("✅ Utente Manager creato")
+    # Crea 4 utenti operatori con password
+    operatori = [
+        {"username": "sofia", "name": "Sofia", "password": "Prova123!"},
+        {"username": "giulia", "name": "Giulia", "password": "Prova123!"},
+        {"username": "martina", "name": "Martina", "password": "Prova123!"},
+        {"username": "chiara", "name": "Chiara", "password": "Prova123!"},
+    ]
+    
+    for op_data in operatori:
+        existing = db.query(User).filter(User.username == op_data["username"]).first()
+        if not existing:
+            user = User(
+                username=op_data["username"],
+                password_hash=hash_password(op_data["password"]),
+                name=op_data["name"],
+                role=UserRole.OPERATORE
+            )
+            db.add(user)
+    
+    db.commit()
+    print("✅ 4 utenti operatori creati (sofia, giulia, martina, chiara) - password: Prova123!")
     
     # Crea categorie inventario
     categories = [
@@ -171,9 +186,13 @@ try:
     
     print("\n🎉 Inizializzazione completata con successo!")
     print(f"   - {len(apartments)} appartamenti")
+    print(f"   - 4 utenti operatori (sofia, giulia, martina, chiara)")
     print(f"   - {len(categories)} categorie inventario")
     print(f"   - {len(inventory_templates)} tipologie articoli per appartamento")
     print(f"   - 1 template checklist con {len(tasks) if not existing_template else 'tasks esistenti'}")
+    print("\n🔑 Credenziali login:")
+    print("   Username: sofia, giulia, martina o chiara")
+    print("   Password: Prova123!")
 
 except Exception as e:
     print(f"❌ Errore durante l'inizializzazione: {e}")

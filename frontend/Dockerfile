@@ -9,9 +9,9 @@ RUN npm install
 # Copy application
 COPY . .
 
-EXPOSE 3000
+# Esponi porta per development/production
+EXPOSE 5173
 
-CMD ["npm", "run", "dev", "--", "--host"]
-
-
+# Default command (può essere sovrascritto da docker-compose)
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
 

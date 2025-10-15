@@ -6,12 +6,13 @@ from models import UserRole
 
 # User Schemas
 class UserBase(BaseModel):
+    username: str
     name: str
     role: UserRole = UserRole.OPERATORE
 
 
 class UserCreate(UserBase):
-    pass
+    password: str
 
 
 class UserResponse(UserBase):
@@ -226,7 +227,8 @@ class AlertResponse(AlertBase):
 
 # Login Schema
 class LoginRequest(BaseModel):
-    name: str
+    username: str
+    password: str
     apartment_id: int
     date: Optional[datetime] = None
 
@@ -235,6 +237,7 @@ class LoginResponse(BaseModel):
     user: UserResponse
     apartment: ApartmentResponse
     checklist: ChecklistResponse
+    access_token: str
 
 
 # Dashboard/Report Schemas

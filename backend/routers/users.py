@@ -12,7 +12,7 @@ from schemas import (
     UserCreate, UserResponse, LoginRequest, LoginResponse,
     ChecklistResponse, ApartmentResponse
 )
-from auth import create_access_token
+from auth import create_access_token, verify_password
 
 router = APIRouter(prefix="/api/users", tags=["users"])
 
@@ -20,15 +20,16 @@ router = APIRouter(prefix="/api/users", tags=["users"])
 @router.post("/login", response_model=LoginResponse)
 def login(login_data: LoginRequest, db: Session = Depends(get_db)):
     """
-    Login dell'operatore: crea/recupera utente, crea nuova checklist per l'appartamento
+    Login dell'operatore con username e password
     """
-    # Trova o crea utente
-    user = db.query(User).filter(User.name == login_data.name).first()
+    # Trova utente per username
+    user = db.query(User).filter(User.username == login_data.username).first()
     if not user:
-        user = User(name=login_data.name, role="operatore")
-        db.add(user)
-        db.commit()
-        db.refresh(user)
+        raise HTTPException(status_code=401, detail="Username o password non corretti")
+    
+    # Verifica password
+    if not verify_password(login_data.password, user.password_hash):
+        raise HTTPException(status_code=401, detail="Username o password non corretti")
     
     # Verifica che l'appartamento esista
     apartment = db.query(Apartment).filter(Apartment.id == login_data.apartment_id).first()
