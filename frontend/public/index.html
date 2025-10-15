@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checklist App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .logo h1 {
+            color: #333;
+            font-size: 28px;
+            font-weight: 600;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-bottom: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .btn-success {
+            background: #28a745;
+        }
+        
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 15px;
+            text-align: center;
+        }
+        
+        .success {
+            background: #efe;
+            color: #363;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 15px;
+            text-align: center;
+        }
+        
+        .task-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            transition: all 0.3s;
+        }
+        
+        .task-item.completed {
+            background: #f8f9fa;
+            border-color: #28a745;
+        }
+        
+        .task-checkbox {
+            margin-right: 15px;
+            transform: scale(1.2);
+        }
+        
+        .task-text {
+            flex: 1;
+            font-size: 16px;
+        }
+        
+        .task-item.completed .task-text {
+            text-decoration: line-through;
+            color: #6c757d;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e1e5e9;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s;
+        }
+        
+        @media (max-width: 480px) {
+            .card {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            .logo h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="container">
+        <div class="card">
+            <div class="logo">
+                <h1>🔐 Login</h1>
+            </div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                
+                <button type="submit" class="btn" id="loginBtn">
+                    Accedi
+                </button>
+            </form>
+            
+            <div id="loginMessage"></div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="mainApp" class="container hidden">
+        <div class="card">
+            <div class="logo">
+                <h1>🏠 Checklist Pulizie</h1>
+                <p>Ciao, <span id="userName"></span>!</p>
+            </div>
+            
+            <div id="apartmentSelection">
+                <div class="form-group">
+                    <label for="apartmentSelect">Seleziona Appartamento</label>
+                    <select id="apartmentSelect" required>
+                        <option value="">Scegli un appartamento...</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="notes">Note (opzionale)</label>
+                    <textarea id="notes" rows="3" placeholder="Note aggiuntive..."></textarea>
+                </div>
+                
+                <button class="btn" id="startChecklistBtn">
+                    Inizia Checklist
+                </button>
+            </div>
+            
+            <div id="checklistView" class="hidden">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <p id="progressText">0 di 0 task completati</p>
+                
+                <div id="tasksList"></div>
+                
+                <button class="btn btn-success" id="completeChecklistBtn" disabled>
+                    ✅ Completa Checklist
+                </button>
+                
+                <button class="btn btn-secondary" id="backBtn">
+                    ← Torna Indietro
+                </button>
+            </div>
+            
+            <div id="appMessage"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+        let currentToken = null;
+        let apartments = [];
+        let currentChecklist = null;
+        let currentTasks = [];
+
+        // Login
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('loginBtn');
+            const messageDiv = document.getElementById('loginMessage');
+            
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Accesso in corso...';
+            messageDiv.innerHTML = '';
+            
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    currentUser = data.user;
+                    currentToken = data.token;
+                    localStorage.setItem('token', currentToken);
+                    localStorage.setItem('user', JSON.stringify(currentUser));
+                    
+                    showMainApp();
+                    loadApartments();
+                } else {
+                    messageDiv.innerHTML = `<div class="error">❌ ${data.detail || 'Credenziali non valide'}</div>`;
+                }
+            } catch (error) {
+                messageDiv.innerHTML = `<div class="error">❌ Errore di connessione</div>`;
+            }
+            
+            loginBtn.disabled = false;
+            loginBtn.textContent = 'Accedi';
+        });
+
+        // Load apartments
+        async function loadApartments() {
+            try {
+                const response = await fetch('/api/apartments', {
+                    headers: {
+                        'Authorization': `Bearer ${currentToken}`
+                    }
+                });
+                
+                if (response.ok) {
+                    apartments = await response.json();
+                    const select = document.getElementById('apartmentSelect');
+                    select.innerHTML = '<option value="">Scegli un appartamento...</option>';
+                    
+                    apartments.forEach(apt => {
+                        const option = document.createElement('option');
+                        option.value = apt.id;
+                        option.textContent = apt.name;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Errore nel caricamento appartamenti:', error);
+            }
+        }
+
+        // Start checklist
+        document.getElementById('startChecklistBtn').addEventListener('click', async () => {
+            const apartmentId = document.getElementById('apartmentSelect').value;
+            const notes = document.getElementById('notes').value;
+            
+            if (!apartmentId) {
+                showMessage('Seleziona un appartamento', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/checklists', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${currentToken}`
+                    },
+                    body: JSON.stringify({
+                        apartment_id: parseInt(apartmentId),
+                        notes: notes
+                    })
+                });
+                
+                if (response.ok) {
+                    currentChecklist = await response.json();
+                    currentTasks = currentChecklist.tasks;
+                    showChecklist();
+                } else {
+                    showMessage('Errore nella creazione checklist', 'error');
+                }
+            } catch (error) {
+                showMessage('Errore di connessione', 'error');
+            }
+        });
+
+        // Show checklist
+        function showChecklist() {
+            document.getElementById('apartmentSelection').classList.add('hidden');
+            document.getElementById('checklistView').classList.remove('hidden');
+            
+            renderTasks();
+            updateProgress();
+        }
+
+        // Render tasks
+        function renderTasks() {
+            const tasksList = document.getElementById('tasksList');
+            tasksList.innerHTML = '';
+            
+            currentTasks.forEach(task => {
+                const taskDiv = document.createElement('div');
+                taskDiv.className = `task-item ${task.completed ? 'completed' : ''}`;
+                taskDiv.innerHTML = `
+                    <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''} 
+                           onchange="toggleTask(${task.id})">
+                    <span class="task-text">${task.description}</span>
+                `;
+                tasksList.appendChild(taskDiv);
+            });
+        }
+
+        // Toggle task
+        async function toggleTask(taskId) {
+            try {
+                const response = await fetch(`/api/tasks/${taskId}/complete`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${currentToken}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const task = currentTasks.find(t => t.id === taskId);
+                    task.completed = true;
+                    
+                    const taskDiv = document.querySelector(`input[onchange="toggleTask(${taskId})"]`).parentElement;
+                    taskDiv.classList.add('completed');
+                    
+                    updateProgress();
+                }
+            } catch (error) {
+                showMessage('Errore nel completamento task', 'error');
+            }
+        }
+
+        // Update progress
+        function updateProgress() {
+            const completed = currentTasks.filter(t => t.completed).length;
+            const total = currentTasks.length;
+            const percentage = total > 0 ? (completed / total) * 100 : 0;
+            
+            document.getElementById('progressFill').style.width = `${percentage}%`;
+            document.getElementById('progressText').textContent = `${completed} di ${total} task completati`;
+            
+            const completeBtn = document.getElementById('completeChecklistBtn');
+            completeBtn.disabled = completed < total;
+        }
+
+        // Complete checklist
+        document.getElementById('completeChecklistBtn').addEventListener('click', async () => {
+            try {
+                const response = await fetch(`/api/checklists/${currentChecklist.id}/complete`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${currentToken}`
+                    }
+                });
+                
+                if (response.ok) {
+                    showMessage('✅ Checklist completata con successo!', 'success');
+                    setTimeout(() => {
+                        showApartmentSelection();
+                    }, 2000);
+                } else {
+                    showMessage('Errore nel completamento checklist', 'error');
+                }
+            } catch (error) {
+                showMessage('Errore di connessione', 'error');
+            }
+        });
+
+        // Back button
+        document.getElementById('backBtn').addEventListener('click', () => {
+            showApartmentSelection();
+        });
+
+        // Show functions
+        function showMainApp() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
+            document.getElementById('userName').textContent = currentUser.name;
+        }
+
+        function showApartmentSelection() {
+            document.getElementById('checklistView').classList.add('hidden');
+            document.getElementById('apartmentSelection').classList.remove('hidden');
+            document.getElementById('apartmentSelect').value = '';
+            document.getElementById('notes').value = '';
+        }
+
+        function showMessage(message, type) {
+            const messageDiv = document.getElementById('appMessage');
+            messageDiv.innerHTML = `<div class="${type}">${message}</div>`;
+            setTimeout(() => {
+                messageDiv.innerHTML = '';
+            }, 3000);
+        }
+
+        // Check if already logged in
+        window.addEventListener('load', () => {
+            const token = localStorage.getItem('token');
+            const user = localStorage.getItem('user');
+            
+            if (token && user) {
+                currentToken = token;
+                currentUser = JSON.parse(user);
+                showMainApp();
+                loadApartments();
+            }
+        });
+    </script>
+</body>
+</html>

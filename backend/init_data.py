@@ -1,206 +1,56 @@
-"""
-Script per inizializzare dati di esempio nel database
-"""
-from database import SessionLocal, engine, Base
-from models import (
-    Apartment, User, UserRole, InventoryCategory, InventoryItem,
-    ChecklistTemplate, TaskTemplate
-)
+from database import engine, SessionLocal
+from models import Base, User, Apartment, Task, Checklist
 from auth import hash_password
 
-# Crea tabelle
+# Crea tutte le tabelle
 Base.metadata.create_all(bind=engine)
 
 db = SessionLocal()
 
 try:
-    # Crea appartamenti
-    apartments = [
-        Apartment(name="Monolocale", description="Monolocale, cucina e bagno"),
-        Apartment(name="Bilocale 1°", description="Primo piano, 2 camere"),
-        Apartment(name="Bilocale Terra", description="Piano terra, 2 camere"),
-        Apartment(name="Trilocale", description="3 camere, cucina e bagno")
-    ]
-    
-    for apt in apartments:
-        existing = db.query(Apartment).filter(Apartment.name == apt.name).first()
-        if not existing:
-            db.add(apt)
-    
-    db.commit()
-    print("✅ Appartamenti creati")
-    
-    # Crea 4 utenti operatori con password
-    operatori = [
+    # Crea utenti
+    users_data = [
         {"username": "sofia", "name": "Sofia", "password": "Prova123!"},
         {"username": "giulia", "name": "Giulia", "password": "Prova123!"},
         {"username": "martina", "name": "Martina", "password": "Prova123!"},
         {"username": "chiara", "name": "Chiara", "password": "Prova123!"},
+        {"username": "admin", "name": "Amministratore", "password": "admin123"}
     ]
     
-    for op_data in operatori:
-        existing = db.query(User).filter(User.username == op_data["username"]).first()
+    for user_data in users_data:
+        existing = db.query(User).filter(User.username == user_data["username"]).first()
         if not existing:
             user = User(
-                username=op_data["username"],
-                password_hash=hash_password(op_data["password"]),
-                name=op_data["name"],
-                role=UserRole.OPERATORE
+                username=user_data["username"],
+                password_hash=hash_password(user_data["password"]),
+                name=user_data["name"]
             )
             db.add(user)
     
-    db.commit()
-    print("✅ 4 utenti operatori creati (sofia, giulia, martina, chiara) - password: Prova123!")
-    
-    # Crea categorie inventario
-    categories = [
-        InventoryCategory(
-            name="Cucina",
-            description="Articoli per la cucina",
-            is_consumable=False
-        ),
-        InventoryCategory(
-            name="Bagno",
-            description="Articoli per il bagno",
-            is_consumable=False
-        ),
-        InventoryCategory(
-            name="Camera",
-            description="Articoli per la camera",
-            is_consumable=False
-        ),
-        InventoryCategory(
-            name="Consumabili",
-            description="Materiali di consumo",
-            is_consumable=True
-        ),
-        InventoryCategory(
-            name="Pulizia",
-            description="Prodotti per la pulizia",
-            is_consumable=True
-        )
+    # Crea appartamenti
+    apartments_data = [
+        {"name": "Monolocale", "description": "Monolocale, cucina e bagno"},
+        {"name": "Bilocale 1°", "description": "Primo piano, 2 camere"},
+        {"name": "Bilocale Terra", "description": "Piano terra, 2 camere"},
+        {"name": "Trilocale", "description": "3 camere, cucina e bagno"}
     ]
     
-    for cat in categories:
-        existing = db.query(InventoryCategory).filter(InventoryCategory.name == cat.name).first()
+    for apt_data in apartments_data:
+        existing = db.query(Apartment).filter(Apartment.name == apt_data["name"]).first()
         if not existing:
-            db.add(cat)
+            apartment = Apartment(**apt_data)
+            db.add(apartment)
     
     db.commit()
-    print("✅ Categorie inventario create")
-    
-    # Recupera IDs
-    apartments = db.query(Apartment).all()
-    cucina_cat = db.query(InventoryCategory).filter(InventoryCategory.name == "Cucina").first()
-    bagno_cat = db.query(InventoryCategory).filter(InventoryCategory.name == "Bagno").first()
-    camera_cat = db.query(InventoryCategory).filter(InventoryCategory.name == "Camera").first()
-    consumabili_cat = db.query(InventoryCategory).filter(InventoryCategory.name == "Consumabili").first()
-    pulizia_cat = db.query(InventoryCategory).filter(InventoryCategory.name == "Pulizia").first()
-    
-    # Crea articoli inventario per ogni appartamento
-    inventory_templates = [
-        # Cucina
-        {"name": "Bicchieri", "category_id": cucina_cat.id, "quantity": 6, "min_quantity": 4, "unit": "pz"},
-        {"name": "Piatti", "category_id": cucina_cat.id, "quantity": 6, "min_quantity": 4, "unit": "pz"},
-        {"name": "Posate", "category_id": cucina_cat.id, "quantity": 12, "min_quantity": 8, "unit": "pz"},
-        {"name": "Pentole", "category_id": cucina_cat.id, "quantity": 3, "min_quantity": 2, "unit": "pz"},
-        {"name": "Caffettiera/Macchina caffè", "category_id": cucina_cat.id, "quantity": 1, "min_quantity": 1, "unit": "pz"},
-        
-        # Bagno
-        {"name": "Asciugamani grandi", "category_id": bagno_cat.id, "quantity": 4, "min_quantity": 2, "unit": "pz"},
-        {"name": "Asciugamani piccoli", "category_id": bagno_cat.id, "quantity": 4, "min_quantity": 2, "unit": "pz"},
-        {"name": "Tappetino bagno", "category_id": bagno_cat.id, "quantity": 1, "min_quantity": 1, "unit": "pz"},
-        {"name": "Phon", "category_id": bagno_cat.id, "quantity": 1, "min_quantity": 1, "unit": "pz"},
-        
-        # Camera
-        {"name": "Lenzuola", "category_id": camera_cat.id, "quantity": 2, "min_quantity": 1, "unit": "set"},
-        {"name": "Coperte", "category_id": camera_cat.id, "quantity": 2, "min_quantity": 1, "unit": "pz"},
-        {"name": "Cuscini", "category_id": camera_cat.id, "quantity": 4, "min_quantity": 2, "unit": "pz"},
-        {"name": "Ferro da stiro", "category_id": camera_cat.id, "quantity": 1, "min_quantity": 1, "unit": "pz"},
-        
-        # Consumabili
-        {"name": "Cialde caffè", "category_id": consumabili_cat.id, "quantity": 20, "min_quantity": 10, "unit": "pz"},
-        {"name": "Carta igienica", "category_id": consumabili_cat.id, "quantity": 6, "min_quantity": 3, "unit": "rotoli"},
-        {"name": "Sapone mani", "category_id": consumabili_cat.id, "quantity": 2, "min_quantity": 1, "unit": "pz"},
-        {"name": "Shampoo/Bagnoschiuma", "category_id": consumabili_cat.id, "quantity": 2, "min_quantity": 1, "unit": "pz"},
-        
-        # Pulizia
-        {"name": "Detersivo piatti", "category_id": pulizia_cat.id, "quantity": 1, "min_quantity": 1, "unit": "pz"},
-        {"name": "Detersivo superfici", "category_id": pulizia_cat.id, "quantity": 1, "min_quantity": 1, "unit": "pz"},
-        {"name": "Sacchetti spazzatura", "category_id": pulizia_cat.id, "quantity": 10, "min_quantity": 5, "unit": "pz"},
-    ]
-    
-    for apt in apartments:
-        for item_template in inventory_templates:
-            existing = db.query(InventoryItem).filter(
-                InventoryItem.apartment_id == apt.id,
-                InventoryItem.name == item_template["name"]
-            ).first()
-            
-            if not existing:
-                item = InventoryItem(
-                    apartment_id=apt.id,
-                    **item_template
-                )
-                db.add(item)
-    
-    db.commit()
-    print("✅ Articoli inventario creati per tutti gli appartamenti")
-    
-    # Crea template checklist generale
-    existing_template = db.query(ChecklistTemplate).filter(
-        ChecklistTemplate.name == "Checklist Standard Pulizia"
-    ).first()
-    
-    if not existing_template:
-        template = ChecklistTemplate(
-            name="Checklist Standard Pulizia",
-            description="Checklist standard per tutti gli appartamenti",
-            apartment_id=None  # Template generale
-        )
-        db.add(template)
-        db.commit()
-        db.refresh(template)
-        
-        # Crea task del template
-        tasks = [
-            {"title": "Aspirare/lavare pavimenti", "task_type": "checkbox", "required": True, "order_index": 0},
-            {"title": "Pulire bagno completo", "task_type": "checkbox", "required": True, "order_index": 1},
-            {"title": "Cambiare biancheria letto", "task_type": "checkbox", "required": True, "order_index": 2},
-            {"title": "Pulire cucina e fornelli", "task_type": "checkbox", "required": True, "order_index": 3},
-            {"title": "Svuotare cestini", "task_type": "checkbox", "required": True, "order_index": 4},
-            {"title": "Rifornire consumabili (carta, sapone, ecc.)", "task_type": "checkbox", "required": True, "order_index": 5},
-            {"title": "Controllo inventario completato", "task_type": "yes_no", "required": True, "order_index": 6},
-            {"title": "Foto dello stato finale", "task_type": "photo", "required": False, "order_index": 7},
-            {"title": "Note aggiuntive o problemi riscontrati", "task_type": "text", "required": False, "order_index": 8},
-        ]
-        
-        for task_data in tasks:
-            task = TaskTemplate(template_id=template.id, **task_data)
-            db.add(task)
-        
-        db.commit()
-        print("✅ Template checklist creato con task")
-    else:
-        print("✅ Template checklist già esistente")
-    
-    print("\n🎉 Inizializzazione completata con successo!")
-    print(f"   - {len(apartments)} appartamenti")
-    print(f"   - 4 utenti operatori (sofia, giulia, martina, chiara)")
-    print(f"   - {len(categories)} categorie inventario")
-    print(f"   - {len(inventory_templates)} tipologie articoli per appartamento")
-    print(f"   - 1 template checklist con {len(tasks) if not existing_template else 'tasks esistenti'}")
-    print("\n🔑 Credenziali login:")
-    print("   Username: sofia, giulia, martina o chiara")
-    print("   Password: Prova123!")
+    print("✅ Database inizializzato con successo!")
+    print("   - 5 utenti creati")
+    print("   - 4 appartamenti creati")
+    print("\n🔑 Credenziali di test:")
+    print("   Username: sofia, giulia, martina, chiara, admin")
+    print("   Password: Prova123! (admin: admin123)")
 
 except Exception as e:
-    print(f"❌ Errore durante l'inizializzazione: {e}")
+    print(f"❌ Errore: {e}")
     db.rollback()
-    raise
-
 finally:
     db.close()
-
-
-
