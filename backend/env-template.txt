@@ -1,0 +1,16 @@
+# Database Configuration - MariaDB
+DATABASE_URL=mysql+pymysql://bennati:TUAPASSWORD@localhost:3306/bennati_checklist
+
+# Security
+SECRET_KEY=genera-una-chiave-segreta-molto-lunga-e-casuale-per-jwt-tokens
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=1440
+
+# File Upload
+UPLOAD_DIR=./uploads
+
+# CORS - Sostituisci con il tuo dominio
+CORS_ORIGINS=https://tuodominio.com,https://www.tuodominio.com
+
+# Environment
+ENVIRONMENT=production
