@@ -11,9 +11,12 @@ services:
       - PYTHONUNBUFFERED=1
       - SECRET_KEY=your-secret-key-change-this-in-production
     volumes:
-      - ./backend/checklist.db:/app/checklist.db
+      - db_data:/app/data
     command: >
       sh -c "python init_data.py && uvicorn main:app --host 0.0.0.0 --port 8000"
+
+volumes:
+  db_data:
 
   # Frontend Node.js
   frontend:
