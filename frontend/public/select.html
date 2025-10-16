@@ -140,6 +140,13 @@
             font-weight: 600;
         }
         
+        .apartment-icon {
+            width: 40px;
+            height: 40px;
+            margin-bottom: 10px;
+            fill: #86BD27;
+        }
+        
         .btn {
             background: #86BD27;
             color: white;
@@ -261,19 +268,45 @@
                     const grid = document.getElementById('apartmentGrid');
                     grid.innerHTML = '';
                     
-                    // Map apartment names to display names
-                    const apartmentNames = {
-                        'Monolocale': 'Mono',
-                        'Bilocale Terra': 'Bilo T',
-                        'Bilocale 1°': 'Bilo 1',
-                        'Trilocale': 'Trilo'
+                    // Map apartment names to display names and icons
+                    const apartmentData = {
+                        'Monolocale': {
+                            name: 'Mono',
+                            icon: `<svg class="apartment-icon" viewBox="0 0 24 24">
+                                <path d="M12 2L2 7v10c0 5.55 3.84 9.74 9 11 5.16-1.26 9-5.45 9-11V7l-10-5z"/>
+                                <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zm0 8c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"/>
+                            </svg>`
+                        },
+                        'Bilocale Terra': {
+                            name: 'Bilo T',
+                            icon: `<svg class="apartment-icon" viewBox="0 0 24 24">
+                                <path d="M12 2L2 7v10c0 5.55 3.84 9.74 9 11 5.16-1.26 9-5.45 9-11V7l-10-5z"/>
+                                <path d="M8 8h8v2H8V8zm0 4h8v2H8v-2z"/>
+                            </svg>`
+                        },
+                        'Bilocale 1°': {
+                            name: 'Bilo 1',
+                            icon: `<svg class="apartment-icon" viewBox="0 0 24 24">
+                                <path d="M12 2L2 7v10c0 5.55 3.84 9.74 9 11 5.16-1.26 9-5.45 9-11V7l-10-5z"/>
+                                <path d="M8 8h8v2H8V8zm0 4h8v2H8v-2z"/>
+                                <circle cx="12" cy="6" r="1"/>
+                            </svg>`
+                        },
+                        'Trilocale': {
+                            name: 'Trilo',
+                            icon: `<svg class="apartment-icon" viewBox="0 0 24 24">
+                                <path d="M12 2L2 7v10c0 5.55 3.84 9.74 9 11 5.16-1.26 9-5.45 9-11V7l-10-5z"/>
+                                <path d="M6 8h4v2H6V8zm8 0h4v2h-4V8zm-4 4h4v2h-4v-2z"/>
+                            </svg>`
+                        }
                     };
                     
                     apartments.forEach(apt => {
                         const card = document.createElement('div');
                         card.className = 'apartment-card';
                         card.dataset.apartmentId = apt.id;
-                        card.innerHTML = `<h3>${apartmentNames[apt.name] || apt.name}</h3>`;
+                        const data = apartmentData[apt.name] || { name: apt.name, icon: '' };
+                        card.innerHTML = `${data.icon}<h3>${data.name}</h3>`;
                         
                         card.addEventListener('click', () => selectApartment(apt.id, card));
                         grid.appendChild(card);

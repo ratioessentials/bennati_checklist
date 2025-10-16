@@ -19,6 +19,10 @@ app.get('/select', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'select.html'));
 });
 
+app.get('/checklist', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'checklist.html'));
+});
+
 // Helper function to call backend
 async function callBackend(endpoint, options = {}) {
     const response = await fetch(`http://backend:8000${endpoint}`, {
