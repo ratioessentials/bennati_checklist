@@ -464,8 +464,7 @@
                     localStorage.setItem('token', currentToken);
                     localStorage.setItem('user', JSON.stringify(currentUser));
                     
-                    showMainApp();
-                    loadApartments();
+                    window.location.href = '/select';
                 } else {
                     messageDiv.innerHTML = `<div class="error">❌ ${data.detail || 'Credenziali non valide'}</div>`;
                 }
